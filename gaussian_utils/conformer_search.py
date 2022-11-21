@@ -44,7 +44,9 @@ def write_conformers_to_sdf(mol, dest):
 
     id = 1
     for conf in mol.GetConformers():
+        mol.SetProp('ID', str(id))
         writer.write(mol, confId=conf.GetId())
+        id += 1
 
 
 def conformer_search(df, dest_dir):
