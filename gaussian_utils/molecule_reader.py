@@ -1,6 +1,8 @@
 import pandas
 from rdkit.Chem import PandasTools
 
+from gaussian_utils.config import *
+
 
 def read_from_spreadsheet(path, spreadsheet_format):
     """Read a list of molecules from a spreadsheet.
@@ -23,9 +25,9 @@ def read_from_spreadsheet(path, spreadsheet_format):
         df = pandas.read_csv(path)
     else:
         raise ValueError('Wrong spreadsheet_format "%s"!' % spreadsheet_format)
-    
+
     PandasTools.AddMoleculeColumnToFrame(
-        df, smilesCol='SMILES'
+        df, smilesCol=SMILES_COL, molCol=RDKIT_MOL_COL
     )
-    
+
     return df
