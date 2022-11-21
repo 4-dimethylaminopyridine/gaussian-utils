@@ -34,7 +34,6 @@ def sdf_to_gjf(sdf_path, output_dir, additional_args):
     None.
 
     """
-    print('Converting %s' % sdf_path)
 
     # create directory
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -54,6 +53,23 @@ def sdf_to_gjf(sdf_path, output_dir, additional_args):
             output_dir.joinpath('ID_%s.gjf' % ID),
             args
         )
+
+
+def mol2_to_gjf(mol2_path, output_file, additional_args):
+    mol = rdkit.Chem.MolFromMol2File(str(mol2_path))
+
+    molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
+    # need to remove first 2 lines
+    molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:])
+
+    args = additional_args.copy()
+    args['molecule_xyz'] = molecule_xyz
+
+    render_template(
+        GAUSSIAN_GJF_TEMPLATE,
+        output_file,
+        args
+    )
 
 
 def convert_all(config_file_path):
@@ -77,6 +93,13 @@ def convert_all(config_file_path):
         }
 
         for f in config_file_path.parent.glob(filename):
+            print('Converting %s' % f)
             if f.suffix == '.sdf':
                 output_dir = f.parent.joinpath(f.stem + '_gjf')
                 sdf_to_gjf(f, output_dir, template_args)
+            elif f.suffix == '.mol2':
+                output_file = f.parent.joinpath(f.stem + '.gjf')
+                mol2_to_gjf(f, output_file, template_args)
+            else:
+                raise ValueError(
+                    'Unsupported file type ("%s") matched!' % f.name)
