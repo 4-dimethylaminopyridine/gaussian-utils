@@ -2,7 +2,7 @@ import yaml
 import jinja2
 import rdkit.Chem
 
-from gaussian_utils.config import *
+from .config import *
 
 
 def render_template(template, dest_file, args):
@@ -16,32 +16,47 @@ def render_template(template, dest_file, args):
     f.close()
 
 
+def sdf_to_gjf(sdf_path, output_dir, additional_args):
+    """Generate a list of gjf files from a sdf file. Each entry in the sdf file
+    must contain a "ID" property.
+
+    Parameters
+    ----------
+    sdf_path : pathlib.Path
+        Path to the sdf file.
+    output_dir : pathlib.Path
+        Path to the output directory.
+    additional_args: dict
+        additional arguments required for template rendering.
+
+    Returns
+    -------
+    None.
+
+    """
+    print('Converting %s' % sdf_path)
+
+    # create directory
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    reader = rdkit.Chem.SDMolSupplier(str(sdf_path))
+    for mol in reader:
+        ID = mol.GetProp('ID')
+        molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
+        # need to remove first 2 lines
+        molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:])
+
+        args = additional_args.copy()
+        args['molecule_xyz'] = molecule_xyz
+
+        render_template(
+            GAUSSIAN_GJF_TEMPLATE,
+            output_dir.joinpath('ID_%s.gjf' % ID),
+            args
+        )
+
+
 def convert_all(config_file_path):
-
-    def sdf_to_gjf(sdf_path, output_dir):
-        # create directory
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        reader = rdkit.Chem.SDMolSupplier(str(sdf_path))
-        for mol in reader:
-            conformer_ID = mol.GetProp('ID')
-            molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
-            # need to remove first 2 lines
-            molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:])
-
-            args = {
-                'gaussian_title_section': gaussian_title_section,
-                'gaussian_route_section': gaussian_route_section,
-                'molecule_charge': molecule_charge,
-                'molecule_spin': molecule_spin,
-                'molecule_xyz': molecule_xyz
-            }
-
-            render_template(
-                GAUSSIAN_GJF_TEMPLATE,
-                output_dir.joinpath('conformer_%s.gjf' % conformer_ID),
-                args
-            )
 
     with open(str(config_file_path), 'r') as f:
         yaml_data = yaml.safe_load(f)
@@ -54,7 +69,14 @@ def convert_all(config_file_path):
         molecule_charge = item['molecule_charge']
         molecule_spin = item['molecule_spin']
 
+        template_args = {
+            'gaussian_title_section': gaussian_title_section,
+            'gaussian_route_section': gaussian_route_section,
+            'molecule_charge': molecule_charge,
+            'molecule_spin': molecule_spin
+        }
+
         for f in config_file_path.parent.glob(filename):
             if f.suffix == '.sdf':
-                output_dir = f.parent.joinpath(f.stem)
-                sdf_to_gjf(f, output_dir)
+                output_dir = f.parent.joinpath(f.stem + '_gjf')
+                sdf_to_gjf(f, output_dir, template_args)
