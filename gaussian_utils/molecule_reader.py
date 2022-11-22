@@ -1,3 +1,4 @@
+import pathlib
 import pandas
 from rdkit.Chem import PandasTools
 
@@ -31,3 +32,10 @@ def read_from_spreadsheet(path, spreadsheet_format):
     )
 
     return df
+
+
+def spreadsheet_to_html(path, spreadsheet_format):
+
+    output = path.parent.joinpath(path.stem + '.html')
+    df = read_from_spreadsheet(path, spreadsheet_format)
+    df.to_html(str(output))
