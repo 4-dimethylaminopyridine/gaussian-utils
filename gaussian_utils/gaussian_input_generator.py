@@ -38,7 +38,7 @@ def sdf_to_gjf(sdf_path, output_dir, additional_args):
     # create directory
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    reader = rdkit.Chem.SDMolSupplier(str(sdf_path))
+    reader = rdkit.Chem.SDMolSupplier(str(sdf_path), removeHs=False)
     for mol in reader:
         ID = mol.GetProp('ID')
         molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
