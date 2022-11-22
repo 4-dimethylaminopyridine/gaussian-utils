@@ -75,7 +75,15 @@ def save_results(directory, output_format):
         results_df = pandas.DataFrame(results, index=[0])
         df = pandas.concat([df, results_df])
 
+    # set column types
+    type_dict = {
+        'File name': str,
+        'H': float,
+        'G': float
+    }
+    df = df.astype(type_dict)
+
     if output_format == 'html':
         df.to_html(str(dest_html), index=False)
     elif output_format == 'excel':
-        df.to_excel()
+        df.to_excel(str(dest_excel), index=False)
