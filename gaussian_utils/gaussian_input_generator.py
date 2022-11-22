@@ -56,7 +56,7 @@ def sdf_to_gjf(sdf_path, output_dir, additional_args):
 
 
 def mol2_to_gjf(mol2_path, output_file, additional_args):
-    mol = rdkit.Chem.MolFromMol2File(str(mol2_path))
+    mol = rdkit.Chem.MolFromMol2File(str(mol2_path), removeHs=False)
 
     molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
     # need to remove first 2 lines
