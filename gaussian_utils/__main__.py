@@ -4,6 +4,7 @@ import pathlib
 from .conformer_search import conformer_search
 from .molecule_reader import read_from_spreadsheet, spreadsheet_to_html
 from .gaussian_input_generator import convert_all
+from .gaussian_result_viewer import save_results
 
 
 def gen_conformers_subcommand(args):
@@ -27,6 +28,11 @@ def gen_conformers_subcommand(args):
 def gen_gs_inputs_subcommand(args):
     config_file = pathlib.Path(args.config_file)
     convert_all(config_file)
+
+
+def extract_results_subcommand(args):
+    directory = pathlib.Path(args.input_dir)
+    save_results(directory, output_format='excel')
 
 
 def main():
@@ -61,6 +67,17 @@ def main():
     subparser_gen_gs_inputs.add_argument(
         'config_file', metavar='<config_file>',
         help='path to the config file'
+    )
+
+    # extract-results subcommand
+    subparser_extract_results = subparsers.add_parser(
+        'extract-results',
+        help='Extract results from Gaussian log files.'
+    )
+    subparser_extract_results.set_defaults(func=extract_results_subcommand)
+    subparser_extract_results.add_argument(
+        'input_dir', metavar='<input_dir>',
+        help='path to the directory containing log files'
     )
 
     args = parser.parse_args()
