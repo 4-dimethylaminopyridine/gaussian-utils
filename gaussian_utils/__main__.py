@@ -12,6 +12,10 @@ def gen_conformers_subcommand(args):
     input_file = pathlib.Path(args.input_file)
     dest_dir = pathlib.Path(args.dest_dir)
 
+    # make sure input_file exists
+    if not input_file.is_file():
+        raise FileNotFoundError('"%s" does not exists!' % input_file)
+
     if input_file.suffix == '.xlsx':
         spreadsheet_format = 'excel'
     elif input_file.suffix == '.csv':
@@ -27,11 +31,21 @@ def gen_conformers_subcommand(args):
 
 def gen_gs_inputs_subcommand(args):
     config_file = pathlib.Path(args.config_file)
+
+    # make sure the file exists
+    if not config_file.is_file():
+        raise FileNotFoundError('"%s" does not exists!' % config_file)
+
     convert_all(config_file)
 
 
 def extract_results_subcommand(args):
     directory = pathlib.Path(args.input_dir)
+
+    # make sure the directory exists
+    if not directory.is_dir():
+        raise FileNotFoundError('"%s" does not exists!' % directory)
+
     save_results(directory, output_format='excel')
 
 
