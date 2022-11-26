@@ -53,6 +53,11 @@ def get_mol_3d(gaussian_log_file):
 
 def save_results(directory, output_format):
 
+    # hartree to kcal/mol conversion
+    # TODO: whether to use 1.89 correction still requires some justification
+    def hartree_to_kcal_per_mol(hartree):
+        return hartree * 627.51 + 1.89
+
     dest_html = directory.joinpath('results.html')
     dest_excel = directory.joinpath('results.xlsx')
 
@@ -69,19 +74,14 @@ def save_results(directory, output_format):
         }
 
         # read thermochemistry data
-        results.update(get_thermo_data(f))
+        thermo_data = get_thermo_data(f)
+        for key, value in thermo_data.items():
+            thermo_data[key] = hartree_to_kcal_per_mol(float(value))
+        results.update(thermo_data)
 
         # write to df
         results_df = pandas.DataFrame(results, index=[0])
         df = pandas.concat([df, results_df])
-
-    # set column types
-    type_dict = {
-        'File name': str,
-        'H': float,
-        'G': float
-    }
-    df = df.astype(type_dict)
 
     if output_format == 'html':
         df.to_html(str(dest_html), index=False)
