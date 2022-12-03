@@ -5,3 +5,8 @@
 {{ molecule_charge }} {{ molecule_spin }}
 {{ molecule_xyz }}
 
+{%- if optional_additional_sections != None %}
+{{ optional_additional_sections }}
+
+{%- endif %}
+! This is a comment line to indicate necessary blank lines

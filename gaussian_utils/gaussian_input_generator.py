@@ -84,12 +84,18 @@ def convert_all(config_file_path):
         gaussian_route_section = item['gaussian_route_section']
         molecule_charge = item['molecule_charge']
         molecule_spin = item['molecule_spin']
+        # can leave this blank
+        if 'optional_additional_sections' in item:
+            optional_additional_sections = item['optional_additional_sections']
+        else:
+            optional_additional_sections = None
 
         template_args = {
             'gaussian_title_section': gaussian_title_section,
             'gaussian_route_section': gaussian_route_section,
             'molecule_charge': molecule_charge,
-            'molecule_spin': molecule_spin
+            'molecule_spin': molecule_spin,
+            'optional_additional_sections': optional_additional_sections
         }
 
         for f in config_file_path.parent.glob(filename):
