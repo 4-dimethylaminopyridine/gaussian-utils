@@ -2,6 +2,8 @@
 
 A collection of python utilities for computational chemistry with Gaussian16.
 
+WARNING: this project is still under development and mainly for my personal use.
+
 * Dependencies
 - python3
 - rdkit
