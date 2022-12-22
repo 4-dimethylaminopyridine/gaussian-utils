@@ -2,3 +2,82 @@
 
 A collection of python utilities for computational chemistry with Gaussian16.
 
+* Dependencies
+- python3
+- rdkit
+- openpyxl
+- pandas
+
+* Usage
+
+#+BEGIN_SRC bash
+python -m gaussian_utils -h
+#+END_SRC
+
+#+BEGIN_SRC
+usage: gaussian-utils [-h] subcommands ...
+
+positional arguments:
+  subcommands
+    gen-conformers
+                   Generate conformers for molecules read from a spreadsheet. The program also produces an html file
+                   for users to validate their spreadsheets.
+    gen-gs-inputs  Generate Gaussian input files according to the config file.
+    extract-results
+                   Extract results from Gaussian log files.
+
+optional arguments:
+  -h, --help       show this help message and exit
+#+END_SRC
+
+** Automated conformer search with MMFF94
+
+#+BEGIN_SRC bash
+python -m gaussian_utils gen-conformers -h
+#+END_SRC
+
+#+BEGIN_SRC
+usage: gaussian-utils gen-conformers [-h] <input_file> <destination_dir>
+
+positional arguments:
+  <input_file>       path to the spreadsheet file
+  <destination_dir>  path to the output directory
+
+optional arguments:
+  -h, --help         show this help message and exit
+#+END_SRC
+
+** Batch gjf file generation
+
+#+BEGIN_SRC bash 
+python -m gaussian_utils gen-gs-inputs -h
+#+END_SRC
+
+#+BEGIN_SRC
+usage: gaussian-utils gen-gs-inputs [-h] <config_file>
+
+positional arguments:
+  <config_file>  path to the config file
+
+optional arguments:
+  -h, --help     show this help message and exit
+#+END_SRC
+
+** Extracting results from a folder containing Gaussian log files
+
+#+BEGIN_SRC bash
+python -m gaussian_utils extract-results -h
+#+END_SRC
+
+#+BEGIN_SRC
+usage: gaussian-utils extract-results [-h] <input_dir>
+
+positional arguments:
+  <input_dir>  path to the directory containing log files
+
+optional arguments:
+  -h, --help   show this help message and exit
+#+END_SRC
+
+* License
+GNU
