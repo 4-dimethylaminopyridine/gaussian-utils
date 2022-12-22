@@ -1,0 +1,4 @@
+#+TITLE: gaussian-utils
+
+A collection of python utilities for computational chemistry with Gaussian16.
+
