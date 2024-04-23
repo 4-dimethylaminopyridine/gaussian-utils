@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gaussian_utils"
+authors = [
+    {name = "Yiming Zhang", email = "yiming.zhang2000@outlook.com"},
+]
+description = "A set of command line tools for computational chemistry with Gaussian16"
+license = {text = "GNU"}
+dependencies = [
+    "rdkit",
+]
+dynamic = ["version"]
+
+[project.scripts]
+gaussian-utils = "gaussian_utils.__main__:main"
