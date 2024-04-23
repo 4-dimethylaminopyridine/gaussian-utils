@@ -11,6 +11,8 @@ description = "A set of command line tools for computational chemistry with Gaus
 license = {text = "GNU"}
 dependencies = [
     "rdkit",
+    "pandas",
+    "openpyxl",
 ]
 dynamic = ["version"]
 
