@@ -10,9 +10,11 @@ authors = [
 description = "A set of command line tools for computational chemistry with Gaussian16"
 license = {text = "GNU"}
 dependencies = [
-    "rdkit",
-    "pandas",
+    "jinja2",
     "openpyxl",
+    "pandas",
+    "pyyaml",
+    "rdkit",
 ]
 dynamic = ["version"]
 
