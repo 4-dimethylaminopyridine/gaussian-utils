@@ -12,12 +12,8 @@ class GaussianInputGenerator:
 
 {{ molecule_charge }} {{ molecule_spin }}
 {{ molecule_xyz }}
-
-{%- for section in optional_additional_sections %}
-{{ section }}
-
-{% endfor %}
-! This is a comment line to indicate necessary blank lines
+{% if optional_additional_sections is not none %}{{ optional_additional_sections }}{% endif %}
+! This is a comment line to indicate a necessary blank line
 '''
 
     def __init__(self, config_file_path):
@@ -53,6 +49,7 @@ class GaussianInputGenerator:
             ID = mol.GetProp('ID')
             molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
             molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:]) # need to remove the first two lines
+            molecule_xyz = molecule_xyz.strip()
 
             args = additional_args.copy()
             args['molecule_xyz'] = molecule_xyz
@@ -71,6 +68,7 @@ class GaussianInputGenerator:
 
         # need to remove first 2 lines
         molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:])
+        molecule_xyz = molecule_xyz.strip()
 
         args = additional_args.copy()
         args['molecule_xyz'] = molecule_xyz
@@ -107,9 +105,10 @@ class GaussianInputGenerator:
 
             # can leave this blank
             if 'optional_additional_sections' in item:
-                optional_additional_sections = item['optional_additional_sections']
+                optional_additional_sections = [i.strip() for i in item['optional_additional_sections']]
+                optional_additional_sections = '\n' + '\n\n'.join(optional_additional_sections)
             else:
-                optional_additional_sections = []
+                optional_additional_sections = None
 
             template_args =  {
                 'gaussian_title_section': gaussian_title_section,
