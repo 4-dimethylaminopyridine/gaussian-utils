@@ -106,7 +106,7 @@ class GaussianInputGenerator:
             # can leave this blank
             if 'optional_additional_sections' in item:
                 optional_additional_sections = [i.strip() for i in item['optional_additional_sections']]
-                optional_additional_sections = '\n' + '\n\n'.join(optional_additional_sections)
+                optional_additional_sections = '\n' + '\n\n'.join(optional_additional_sections) + '\n'
             else:
                 optional_additional_sections = None
 
