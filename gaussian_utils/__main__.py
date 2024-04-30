@@ -2,6 +2,7 @@ import argparse
 import pathlib
 from .conformer_searcher import ConformerSearcher
 from .gaussian_input_generator import GaussianInputGenerator
+from .gaussian_results_extractor import GaussianResultsExtractor
 
 def search_conformers_subcommand(args):
 
@@ -26,6 +27,16 @@ def generate_gs_inputs_subcommand(args):
 
     generator = GaussianInputGenerator(config_file)
     generator.generate_gaussian_input(dest_dir)
+
+def extract_gs_results_subcommand(args):
+    results_directory = pathlib.Path(args.input_dir)
+    output_directory = pathlib.Path(args.output_dir)
+
+    if not results_directory.is_dir():
+        raise FileNotFoundError(f'{results_directory} does not exist!')
+
+    extractor = GaussianResultsExtractor(results_directory)
+    extractor.save_results(output_directory, 'xlsx')
 
 def main():
 
@@ -63,6 +74,21 @@ def main():
         help='path to the output directory',
     )
     subparser_generate_gs_inputs.set_defaults(func=generate_gs_inputs_subcommand)
+
+    # extract-gs-results subcommand
+    subparser_extract_gs_results = subparsers.add_parser(
+        'extract-gs-results',
+        help='Extract results from Gaussian log files.',
+    )
+    subparser_extract_gs_results.add_argument(
+        'input_dir', metavar='<input_dir>',
+        help='path to the directory containing Gaussian log files',
+    )
+    subparser_extract_gs_results.add_argument(
+        'output_dir', metavar='<output_dir>',
+        help='path to the output directory',
+    )
+    subparser_extract_gs_results.set_defaults(func=extract_gs_results_subcommand)
 
 
     args = parser.parse_args()
