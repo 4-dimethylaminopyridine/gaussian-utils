@@ -42,7 +42,7 @@ class GaussianInputGenerator:
 
         # create directory
         output_dir = pathlib.Path(output_dir)
-        output_dir.mkdir(parents=True)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
         reader = rdkit.Chem.SDMolSupplier(str(sdf_path), removeHs=False)
         for mol in reader:
@@ -60,11 +60,15 @@ class GaussianInputGenerator:
                 args,
             )
 
-    def mol2_to_gjf(self, mol2_path, output_file, additional_args):
+    def _mol2_to_gjf(self, mol2_path, output_file, additional_args):
 
-        mol = rdkit.Chem.MolFromMol2File(str(mol2_file), removeHs=False)
+        # create directory
+        output_file = pathlib.Path(output_file)
+        output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        molecule_xyz = rdkit.ChemMolToXYZBlock(mol)
+        mol = rdkit.Chem.MolFromMol2File(str(mol2_path), removeHs=False)
+
+        molecule_xyz = rdkit.Chem.MolToXYZBlock(mol)
 
         # need to remove first 2 lines
         molecule_xyz = ''.join(molecule_xyz.splitlines(keepends=True)[2:])
@@ -120,9 +124,10 @@ class GaussianInputGenerator:
 
             for f in self._config_file_path.parent.glob(filename):
                 print(f'Converting {f}')
+                subname = f.relative_to(self._config_file_path.parent).with_suffix('')
                 if f.suffix == '.sdf':
-                    self._sdf_to_gjf(f, f'{output_dir}/{output_name}', template_args)
+                    self._sdf_to_gjf(f, f'{output_dir}/{output_name}/{subname}', template_args)
                 elif f.suffix == '.mol2':
-                    self._mol2_to_gjf(f, f'{output_dir}/{output_name}.gjf', template_args)
+                    self._mol2_to_gjf(f, f'{output_dir}/{output_name}/{subname}.gjf', template_args)
                 else:
                     raise ValueError(f'Unsupported file type: {f.suffix}')
